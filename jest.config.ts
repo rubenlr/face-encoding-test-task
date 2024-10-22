@@ -7,10 +7,13 @@ const jestConfig: JestConfigWithTsJest = {
   testEnvironment: 'node',
   testMatch: ['**/?(*.)+(spec|test).ts'],
   moduleFileExtensions: ['ts', 'js'],
+  moduleNameMapper: {
+    '^@/(.*)$': '<rootDir>/src/$1'
+  },
   collectCoverage: true,
   coverageDirectory: 'coverage',
   collectCoverageFrom: ['src/**/*.ts'],
-  verbose: true
+  verbose: true,
 }
 
 export default jestConfig

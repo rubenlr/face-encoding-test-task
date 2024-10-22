@@ -14,4 +14,4 @@ ENV NPM_CONFIG_LOGLEVEL=warn NODE_ENV=production
 RUN chown -R node:node /api
 EXPOSE 3000
 USER node
-CMD ["sh", "-c", "ls -lha && node ./server.js"]
+CMD ["sh", "-c", "node ./server.js"]
