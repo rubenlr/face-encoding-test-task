@@ -1,7 +1,7 @@
 # Makefile for Face Encoding API test
 
 DOCKER_IMAGE = face-encoding-api-test:latest
-DOCKER_CONTAINER = face-encoding-api-test-container
+DOCKER_CONTAINER = face-encoding-api-test
 
 # Default target
 .PHONY: default
@@ -21,7 +21,7 @@ build:
 .PHONY: start
 start: stop
 	@echo "Running Docker container..."
-	docker run -d -p 3000:3000 --name $(DOCKER_CONTAINER) $(DOCKER_IMAGE)
+	./start-docker.sh
 	@echo "Waiting for port 3000 to be ready..."
 	npx wait-on http://localhost:3000 --timeout 30000
 	@echo "App is ready and listening on port 3000"
