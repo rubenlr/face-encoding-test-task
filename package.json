@@ -7,9 +7,9 @@
     "re-build": "npm run clean && rm -rf ./node_modules && npm run build",
     "start": "npm run build && node dist/index.js",
     "dev": "nodemon --watch 'src/**/*.ts' --exec \"npx tsx src/server.ts\"",
-    "smoke": "npx jest \"test/**/*.test.ts\"",
-    "test:ci": "npx jest --colors --ci --coverage \"src/**/*.test.ts\"",
-    "test": "npx jest --watch --colors --coverage \"src/**/*.test.ts\"",
+    "smoke": "npx jest --testPathPattern=\"test/\"",
+    "test:ci": "npx jest --colors --ci --coverage --testPathPattern=\"src/\"",
+    "test": "npx jest --watch --colors --coverage --testPathPattern=\"src/\"",
     "clean": "rm -rf ./dist ./coverage"
   },
   "keywords": [],
