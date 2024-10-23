@@ -7,6 +7,7 @@
     "re-build": "npm run clean && rm -rf ./node_modules && npm run build",
     "start": "npm run build && node dist/index.js",
     "dev": "nodemon --watch 'src/**/*.ts' --exec \"npx tsx src/server.ts\"",
+    "smoke": "npx tsx src/smoke.ts",
     "test": "npx jest",
     "test:watch": "npx jest --watch",
     "clean": "rm -rf ./dist ./coverage"
@@ -29,6 +30,7 @@
     "ts-jest": "^29.2.5",
     "tslib": "^2.8.0",
     "tsx": "^4.19.1",
-    "typescript": "^5.6.3"
+    "typescript": "^5.6.3",
+    "wait-port": "^1.1.0"
   }
 }
