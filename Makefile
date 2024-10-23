@@ -22,8 +22,6 @@ build:
 start: stop
 	@echo "Running Docker container..."
 	docker run -d -p 3000:3000 --name $(DOCKER_CONTAINER) $(DOCKER_IMAGE)
-	sleep 20
-	make logs
 	@echo "Waiting for port 3000 to be ready..."
 	npx wait-on http://localhost:3000 --timeout 30000
 	@echo "App is ready and listening on port 3000"
