@@ -5,7 +5,11 @@ DOCKER_CONTAINER = face-encoding-api-test-container
 
 # Default target
 .PHONY: default
-default: build debug
+default: build
+
+# CI target
+.PHONY: ci
+ci: build start stop
 
 # Build docker image
 .PHONY: build
@@ -13,11 +17,14 @@ build:
 	@echo "Building Docker image..."
 	docker build -t $(DOCKER_IMAGE) .
 
-# Run the Docker container
+# Run the Docker container and wait for the application be ready
 .PHONY: start
 start: stop
 	@echo "Running Docker container..."
-	docker run -p 3000:3000 --name $(DOCKER_CONTAINER) $(DOCKER_IMAGE)
+	docker run -d -p 3000:3000 --name $(DOCKER_CONTAINER) $(DOCKER_IMAGE)
+	@echo "Waiting for port 3000 to be ready..."
+	npx wait-on http://localhost:3000 --timeout 30000
+	@echo "App is ready and listening on port 3000"
 
 .PHONY: logs
 logs:
@@ -41,6 +48,7 @@ stop:
 help:
 	@echo "Available commands:"
 	@echo "  make          - Build the project (default)"
+	@echo "  make ci       - Execute CI targets to validate the entire flow"
 	@echo "  make build    - Build the TypeScript project"
 	@echo "  make logs     - Show logs
 	@echo "  make start    - Run the application"
