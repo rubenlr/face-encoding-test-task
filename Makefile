@@ -21,6 +21,7 @@ build:
 .PHONY: start
 start: stop
 	@echo "Running Docker container..."
+	chmod +x start-docker.sh
 	./start-docker.sh
 	@echo "Waiting for port 3000 to be ready..."
 	npx wait-on http://localhost:3000 --timeout 30000

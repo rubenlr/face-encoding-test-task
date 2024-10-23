@@ -8,8 +8,6 @@ RUN npm run build
 FROM node:lts-alpine AS production
 WORKDIR /api
 COPY --chown=node:node --from=build /app/package*.json ./
-COPY --chown=node:node /start-docker.sh .
-RUN chmod +x ./start-docker.sh
 RUN npm ci --omit=dev
 COPY --chown=node:node --from=build /app/dist/ .
 ENV NPM_CONFIG_LOGLEVEL=warn NODE_ENV=production
