@@ -5,7 +5,11 @@ DOCKER_CONTAINER = face-encoding-api-test-container
 
 # Default target
 .PHONY: default
-default: build debug
+default: build
+
+# CI target
+.PHONY: ci
+ci: build start stop
 
 # Build docker image
 .PHONY: build
@@ -41,6 +45,7 @@ stop:
 help:
 	@echo "Available commands:"
 	@echo "  make          - Build the project (default)"
+	@echo "  make ci       - Execute CI targets to validate the entire flow"
 	@echo "  make build    - Build the TypeScript project"
 	@echo "  make logs     - Show logs
 	@echo "  make start    - Run the application"

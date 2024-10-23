@@ -6,14 +6,14 @@ on:
       - master
 
 jobs:
-  build:
+  jest-tests:
     runs-on: ubuntu-latest
 
     strategy:
       matrix:
         node_version:
-          - LTS
-          - LATEST
+          - lts/latest
+          - latest
 
     steps:
       - name: checkout
@@ -35,3 +35,21 @@ jobs:
 
       - name: Run tests
         run: npm test
+
+  docker-tests:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: checkout
+        uses: actions/checkout@v4
+
+      - name: Install Node.js lts
+        uses: actions/setup-node@v4
+        with:
+          node-version: lts/latest
+          cache: 'npm'
+          cache-dependency-path: package-lock.json
+          architecture: 'x64'
+
+      - name: Make CI
+        run: make ci
