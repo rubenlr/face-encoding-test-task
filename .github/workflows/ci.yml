@@ -78,8 +78,6 @@ jobs:
               AttributeName=imageId,KeyType=HASH \
               AttributeName=sessionId,KeyType=RANGE \
             --provisioned-throughput ReadCapacityUnits=50,WriteCapacityUnits=50 \
-            --region "${AWS_REGION}" \
-            --endpoint-url="${AWS_ENDPOINT_URL}" \
             --no-paginate \
             --output json
           echo "Test Execution complete!"
