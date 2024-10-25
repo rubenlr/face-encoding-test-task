@@ -43,14 +43,29 @@ stop:
 	docker stop $(DOCKER_CONTAINER) || true
 	docker rm $(DOCKER_CONTAINER) || true
 
+# Start testing environment
+.PHONY: start-test-env
+start-test-env:
+	@echo "Starting testing environment..."
+	./scripts/start-localstack.sh
+	./scripts/setup-tables.sh
+
+# Stop testing environment
+.PHONY: stop-test-env
+stop-test-env:
+	@echo "Starting testing environment..."
+	docker-compose -f docker-compose.test.yml down
+
 # Help command to display available targets
 .PHONY: help
 help:
 	@echo "Available commands:"
-	@echo "  make          - Build the project (default)"
-	@echo "  make ci       - Execute CI targets to validate the entire flow"
-	@echo "  make build    - Build the TypeScript project"
-	@echo "  make logs     - Show logs
-	@echo "  make start    - Run the application"
-	@echo "  make stop     - Stop and remove the Docker container"
-	@echo "  make help     - Display this help message"
+	@echo "  make          			- Build the project (default)"
+	@echo "  make ci       			- Execute CI targets to validate the entire flow"
+	@echo "  make build    			- Build the TypeScript project"
+	@echo "  make logs     			- Show logs
+	@echo "  make start    			- Run the application"
+	@echo "  make stop     			- Stop and remove the Docker container"
+	@echo "  make start-test-env    - Start testing environment"
+	@echo "  make stop-test-env		- Stop testing environment"
+	@echo "  make help     			- Display this help message"

@@ -15,6 +15,17 @@ jobs:
           - lts/iron
           - current
 
+    services:
+      localstack:
+        image: localstack/localstack:latest
+        ports:
+          - 4566:4566
+          - 4571:4571
+        env:
+          SERVICES: dynamodb
+          DEBUG: 1
+        options: --health-cmd="curl -f http://localhost:4566/_localstack/health || exit 1" --health-interval=5s --health-timeout=10s --health-retries=5
+
     steps:
       - name: checkout
         uses: actions/checkout@v4
@@ -27,11 +38,21 @@ jobs:
           cache-dependency-path: package-lock.json
           architecture: 'x64'
 
+      - name: Set up AWS CLI
+        uses: aws-actions/configure-aws-credentials@v3
+        with:
+          aws-endpoint-url: http://localhost:4566
+          aws-region: us-east-1
+
       - name: Install dependencies
         run: npm install
+        run: pip install awscli-local
 
       - name: Build the project
         run: npm run build
+
+      - name: Wait for LocalStack to be ready
+        run: timeout 30s bash -c 'until curl -s http://localhost:4566/_localstack/health | grep \'"dynamodb": "running"\' > /dev/null; do sleep 1; done'
 
       - name: Run tests
         run: npm run test:ci

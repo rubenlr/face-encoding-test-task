@@ -1,5 +1,3 @@
-version: '3.8'
-
 services:
   face-encoding-api-test:
     image: face-encoding-api-test:latest
@@ -9,4 +7,3 @@ services:
       test: ["CMD", "curl", "-f", "http://localhost:3000/health"]
       interval: 5s
       retries: 5
-      start_period: 15s

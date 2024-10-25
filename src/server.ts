@@ -1,19 +1,24 @@
-import appBuild from './app'
+import buildFastify from './app'
+import * as dotenv from 'dotenv'
 
-const host = appBuild({
-  logger: {
-    level: 'info'
-  }
-})
+dotenv.config()
 
-host.listen({ port: 3000, host: '0.0.0.0' }, function (err, address) {
-  if (err) {
-    host.log.error(err)
-    process.exit(1)
-  }
-  host.log.info(`server listening on ${address}`)
-})
+function start () {
+  const app = buildFastify({
+    logger: {
+      level: 'info'
+    }
+  })
 
-export default function server () {
-  return host
+  app.listen({ port: 3000, host: '0.0.0.0' }, function (err, address) {
+    if (err) {
+      app.log.error(err)
+      process.exit(1)
+    }
+    app.log.info(`server listening on ${address}`)
+  })
+
+  return app
 }
+
+start()

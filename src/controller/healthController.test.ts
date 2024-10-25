@@ -1,8 +1,8 @@
 import { FastifyInstance } from 'fastify'
 import request from 'supertest'
-import serverApp from './app'
+import serverApp from '../app'
 
-describe('App running test', () => {
+describe('Health Controller tests', () => {
   let app: FastifyInstance
 
   beforeAll(async () => {
@@ -14,9 +14,8 @@ describe('App running test', () => {
     await app.close()
   })
 
-  test('GET /ping should return pong', async () => {
-    const response = await request(app.server).get('/ping')
+  test('GET /health should be return 200', async () => {
+    const response = await request(app.server).get('/health')
     expect(response.status).toBe(200)
-    expect(response.body).toEqual({ pong: 'it worked!' })
   })
 })

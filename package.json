@@ -3,13 +3,15 @@
   "version": "1.0.0",
   "main": "server.js",
   "scripts": {
+    "prebuild": "npm run clean",
     "build": "tsc -p .",
-    "re-build": "npm run clean && rm -rf ./node_modules && npm run build",
     "start": "npm run build && node dist/index.js",
     "dev": "nodemon --watch 'src/**/*.ts' --exec \"npx tsx src/server.ts\"",
     "smoke": "npx jest --testPathPattern=\"test/\"",
     "test:ci": "npx jest --colors --ci --coverage --testPathPattern=\"src/\"",
+    "pretest": "make start-test-env",
     "test": "npx jest --watch --colors --coverage --testPathPattern=\"src/\"",
+    "posttest": "make stop-test-env",
     "clean": "rm -rf ./dist ./coverage"
   },
   "keywords": [],
@@ -17,8 +19,15 @@
   "license": "unlicense",
   "description": "",
   "dependencies": {
+    "@aws-sdk/client-dynamodb": "^3.677.0",
     "@aws-sdk/client-s3": "^3.677.0",
-    "fastify": "^5.0.0"
+    "@aws-sdk/util-dynamodb": "^3.678.0",
+    "@fastify/swagger": "^9.2.0",
+    "@fastify/swagger-ui": "^5.1.0",
+    "async-mutex": "^0.5.0",
+    "dotenv": "^16.4.5",
+    "fastify": "^5.0.0",
+    "uuid": "^10.0.0"
   },
   "devDependencies": {
     "@testcontainers/localstack": "^10.13.2",
