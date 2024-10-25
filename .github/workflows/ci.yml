@@ -39,9 +39,8 @@ jobs:
           architecture: 'x64'
 
       - name: Set up AWS CLI
-        uses: aws-actions/configure-aws-credentials@v3
+        uses: aws-actions/configure-aws-credentials@v4
         with:
-          aws-endpoint-url: http://localhost:4566
           aws-region: us-east-1
 
       - name: Install dependencies
