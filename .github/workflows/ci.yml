@@ -38,10 +38,12 @@ jobs:
           cache-dependency-path: package-lock.json
           architecture: 'x64'
 
-      - name: Set up AWS CLI
-        uses: aws-actions/configure-aws-credentials@v4
-        with:
-          aws-region: us-east-1
+      - name: Install LocalStack and awslocal
+        run: |
+          pip install localstack awscli-local
+
+      # - name: Start LocalStack
+      #   run: localstack start -d
 
       - name: Install dependencies
         run: npm install
@@ -52,6 +54,36 @@ jobs:
       - name: Wait for LocalStack to be ready
         run: |
           timeout 30s bash -c "until curl -s http://localhost:4566/_localstack/health | grep '\"dynamodb\": \"running\"' > /dev/null; do sleep 1; done"
+
+      - name: Create DDB tables
+        run: |
+          awslocal dynamodb create-table \
+                --table-name tb_sessions \
+                --attribute-definitions \
+                    AttributeName=sessionId,AttributeType=S \
+                    AttributeName=userId,AttributeType=S \
+                --key-schema \
+                    AttributeName=sessionId,KeyType=HASH \
+                    AttributeName=userId,KeyType=RANGE \
+                --provisioned-throughput ReadCapacityUnits=50,WriteCapacityUnits=50 \
+                --no-paginate \
+                --output json \
+                > /dev/null 2>&1
+          awslocal dynamodb create-table \
+                  --table-name tb_images \
+                  --attribute-definitions \
+                      AttributeName=imageId,AttributeType=S \
+                      AttributeName=sessionId,AttributeType=S \
+                  --key-schema \
+                      AttributeName=imageId,KeyType=HASH \
+                      AttributeName=sessionId,KeyType=RANGE \
+                  --provisioned-throughput ReadCapacityUnits=50,WriteCapacityUnits=50 \
+                  --region "${AWS_REGION}" \
+                  --endpoint-url="${AWS_ENDPOINT_URL}" \
+                  --no-paginate \
+                  --output json \
+                  > /dev/null 2>&1
+          echo "Test Execution complete!"
 
       - name: Run tests
         run: npm run test:ci
