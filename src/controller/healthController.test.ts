@@ -2,7 +2,7 @@ import { FastifyInstance } from 'fastify'
 import request from 'supertest'
 import serverApp from '../app'
 
-describe('Image Controller tests', () => {
+describe('Health Controller tests', () => {
   let app: FastifyInstance
 
   beforeAll(async () => {
@@ -14,9 +14,8 @@ describe('Image Controller tests', () => {
     await app.close()
   })
 
-  test('POST /image', async () => {
-    const response = await request(app.server).post('/image')
+  test('GET /health should be return 200', async () => {
+    const response = await request(app.server).get('/health')
     expect(response.status).toBe(200)
-    expect(response.body).toEqual({ hello: 'postImage' })
   })
 })

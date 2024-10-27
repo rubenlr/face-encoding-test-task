@@ -1,0 +1,107 @@
+name: CI
+
+on:
+  pull_request:
+    branches:
+      - master
+
+jobs:
+  jest-tests:
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        node_version:
+          - lts/iron
+          - current
+
+    services:
+      localstack:
+        image: localstack/localstack:latest
+        ports:
+          - 4566:4566
+          - 4571:4571
+        env:
+          DEBUG: 1
+          SERVICES: dynamodb,s3,sts
+          DYNAMODB_IN_MEMORY: 1
+        options: --health-cmd="curl -f http://localhost:4566/_localstack/health || exit 1" --health-interval=5s --health-timeout=10s --health-retries=5
+
+    steps:
+      - name: checkout
+        uses: actions/checkout@v4
+
+      - name: Install Node.js ${{ matrix.node_version }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node_version }}
+          cache: 'npm'
+          cache-dependency-path: package-lock.json
+          architecture: 'x64'
+
+      - name: Install and awslocal
+        run: |
+          pip install awscli-local
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Build the project
+        run: npm run build
+
+      - name: Wait for LocalStack to be ready
+        run: |
+          timeout 30s bash -c "until curl -f http://localhost:4566/_localstack/health; do echo 'Waiting for LocalStack...'; sleep 1; done"
+
+      - name: Create DDB tables
+        run: |
+          export AWS_ACCESS_KEY_ID=test
+          export AWS_SECRET_ACCESS_KEY=test
+          export AWS_DEFAULT_REGION=us-east-1
+          export AWS_ENDPOINT_URL=http://localhost:4566
+          awslocal sts get-caller-identity
+          awslocal dynamodb create-table \
+            --table-name tb_sessions \
+            --attribute-definitions \
+              AttributeName=sessionId,AttributeType=S \
+              AttributeName=userId,AttributeType=S \
+            --key-schema \
+              AttributeName=sessionId,KeyType=HASH \
+              AttributeName=userId,KeyType=RANGE \
+            --provisioned-throughput ReadCapacityUnits=50,WriteCapacityUnits=50 \
+            --no-paginate \
+            --output json
+          awslocal dynamodb create-table \
+            --table-name tb_images \
+            --attribute-definitions \
+              AttributeName=imageId,AttributeType=S \
+              AttributeName=sessionId,AttributeType=S \
+            --key-schema \
+              AttributeName=imageId,KeyType=HASH \
+              AttributeName=sessionId,KeyType=RANGE \
+            --provisioned-throughput ReadCapacityUnits=50,WriteCapacityUnits=50 \
+            --no-paginate \
+            --output json
+          echo "Test Execution complete!"
+        shell: bash
+
+      - name: Run tests
+        run: npm run test:ci
+
+  docker-tests:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Install Docker Compose
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y docker-compose
+
+      - name: Make CI
+        run: make ci

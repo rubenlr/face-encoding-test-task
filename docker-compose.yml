@@ -1,0 +1,9 @@
+services:
+  face-encoding-api-test:
+    image: face-encoding-api-test:latest
+    ports:
+      - "3000:3000"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3000/health"]
+      interval: 5s
+      retries: 5
