@@ -8,12 +8,10 @@ describe('Image Controller tests', () => {
   beforeAll(async () => {
     app = serverApp()
     await app.ready()
-    // Start Docker dependencies if necessary
   })
 
   afterAll(async () => {
     await app.close()
-    // Stop Docker dependencies if necessary
   })
 
   test('POST /image', async () => {
