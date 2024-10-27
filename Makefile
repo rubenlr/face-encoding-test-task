@@ -47,8 +47,8 @@ stop:
 .PHONY: start-test-env
 start-test-env:
 	@echo "Starting testing environment..."
-	./scripts/start-localstack.sh
-	./scripts/setup-tables.sh
+	bash ./scripts/start-localstack.sh
+	bash ./scripts/setup-tables.sh
 
 # Stop testing environment
 .PHONY: stop-test-env
