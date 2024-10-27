@@ -19,4 +19,11 @@ describe('App running test', () => {
     expect(response.status).toBe(200)
     expect(response.body).toEqual({ pong: 'it worked!' })
   })
+
+  test('AWS environment variables should be set correctly', () => {
+    expect(process.env.AWS_ACCESS_KEY_ID).toBe('test')
+    expect(process.env.AWS_SECRET_ACCESS_KEY).toBe('test')
+    expect(process.env.AWS_REGION).toBe('us-east-1')
+    expect(process.env.AWS_ENDPOINT_URL).toBe('http://localhost:4566')
+  })
 })

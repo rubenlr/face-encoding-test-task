@@ -58,6 +58,11 @@ jobs:
 
       - name: Create DDB tables
         run: |
+          export AWS_ACCESS_KEY_ID=test
+          export AWS_SECRET_ACCESS_KEY=test
+          export AWS_DEFAULT_REGION=us-east-1
+          export AWS_ENDPOINT_URL=http://localhost:4566
+          awslocal sts get-caller-identity
           awslocal dynamodb create-table \
             --table-name tb_sessions \
             --attribute-definitions \
