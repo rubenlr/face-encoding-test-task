@@ -1,3 +1,5 @@
+import type Decimal from 'decimal.js'
+
 export enum Status {
   Iniciated = 'Iniciated',
   Pending = 'Pending',
@@ -6,7 +8,7 @@ export enum Status {
 }
 
 export interface Session {
-  sessionId: string // also indexed as table unique key
+  sessionId: string
   userId: string
   createdAt: Date
   expiredAt: Date
@@ -14,13 +16,14 @@ export interface Session {
 }
 
 export interface Image {
-  imageId: string // also indexed as table unique key
-  sessionId: string // also indexed as table index
+  imageId: string
+  sessionId: string
+  userId: string
   imageName: string
   imageType: string
   createdAt: Date
   expiredAt: Date
   status: Status
   error: string
-  result: [] // json object array that can be saved as string or object if possible
+  result: Decimal[][]
 }

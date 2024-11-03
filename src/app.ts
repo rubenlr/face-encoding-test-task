@@ -1,8 +1,6 @@
-import fastify, {
-  type FastifyInstance,
-  type FastifyServerOptions
-} from 'fastify'
+import fastify, { type FastifyInstance } from 'fastify'
 import registerRoutes from './routes/registerRoutes'
+import fastifyMultipart from '@fastify/multipart'
 
 const swaggerOps = {
   openapi: {
@@ -27,6 +25,11 @@ const swaggerUiOps = {
 export default function buildFastify (opts = {}): FastifyInstance {
   const app = fastify(opts)
 
+  app.register(fastifyMultipart, {
+    limits: {
+      fileSize: 10 * 1024 * 1024 // 10 MB
+    }
+  })
   app.register(require('@fastify/swagger'), swaggerOps)
   app.register(require('@fastify/swagger-ui'), swaggerUiOps)
   app.register(registerRoutes)

@@ -76,10 +76,27 @@ jobs:
             --attribute-definitions \
               AttributeName=imageId,AttributeType=S \
               AttributeName=sessionId,AttributeType=S \
+              AttributeName=userId,AttributeType=S \
             --key-schema \
               AttributeName=imageId,KeyType=HASH \
-              AttributeName=sessionId,KeyType=RANGE \
             --provisioned-throughput ReadCapacityUnits=50,WriteCapacityUnits=50 \
+            --global-secondary-indexes \
+              "[
+                  {
+                      \"IndexName\": \"SessionUserIndex\",
+                      \"KeySchema\": [
+                          {\"AttributeName\":\"sessionId\",\"KeyType\":\"HASH\"}
+                          {\"AttributeName\":\"userId\",\"KeyType\":\"RANGE\"}
+                      ],
+                      \"Projection\":{
+                          \"ProjectionType\":\"ALL\"
+                      },
+                      \"ProvisionedThroughput\": {
+                          \"ReadCapacityUnits\": 50,
+                          \"WriteCapacityUnits\": 50
+                      }
+                  }
+              ]" \
             --no-paginate \
             --output json
           echo "Test Execution complete!"

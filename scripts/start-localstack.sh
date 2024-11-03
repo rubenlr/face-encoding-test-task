@@ -2,20 +2,26 @@
 
 docker-compose -f docker-compose.test.yml up -d
 
-# Function to check if all services are healthy
 check_healthy() {
-  STATUS=$(docker-compose -f docker-compose.test.yml ps --services --filter "status=running" --filter "health=healthy")
-  TOTAL_SERVICES=$(docker-compose -f docker-compose.test.yml config --services | wc -l)
-  HEALTHY_SERVICES=$(echo "$STATUS" | wc -l)
+  SERVICES=$(docker-compose -f docker-compose.test.yml config --services)
+  TOTAL_SERVICES=$(echo "$SERVICES" | wc -l)
+  STATUS=$(docker ps --filter "status=running" --filter "health=healthy" --format "{{.Names}}")
 
-  if [ "$HEALTHY_SERVICES" -eq "$TOTAL_SERVICES" ]; then
-    return 0  # All services are healthy
+  HEALTHY_SERVICES=0
+  for service in $SERVICES; do
+    if echo "$STATUS" | grep -q "$service"; then   
+      HEALTHY_SERVICES=$((HEALTHY_SERVICES + 1))
+    fi
+  done
+
+  if [ "$HEALTHY_SERVICES" -eq 1 ]; then
+    return 0
   else
-    return 1  # Not all services are healthy
+    return 1
   fi
 }
 
-# functio need to be exported to be used inside timeout with new bash
+# function need to be exported to be used inside timeout with new bash
 export -f check_healthy
 
 echo "Waiting for all dependency services to be healthy..."

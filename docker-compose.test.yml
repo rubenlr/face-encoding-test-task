@@ -15,3 +15,8 @@ services:
       interval: 10s
       timeout: 5s
       retries: 3
+
+  veriffy-api:
+    image: veriffdocker/face-encoding-test-task:latest
+    ports:
+      - "8000:8000"

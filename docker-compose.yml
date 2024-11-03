@@ -7,3 +7,8 @@ services:
       test: ["CMD", "curl", "-f", "http://localhost:3000/health"]
       interval: 5s
       retries: 5
+
+  veriffy-api:
+    image: veriffdocker/face-encoding-test-task:latest
+    ports:
+      - "8000:8000"
